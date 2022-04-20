@@ -5,7 +5,7 @@
 #include "port_handler_windows.h"
 #include "packet_handler.h"
 
-//EEPROM		�̸�		 �ּ�	ũ��
+//EEPROM		ÀÌ¸§		 ÁÖ¼Ò	Å©±â
 #define Model_Number			0	//2
 #define Model_Information		2	//4
 #define Firmware_Version		6	//1
