@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cassert>
 
+//~~SDK/c++/include/dynamixel_sdk/dynamixel_sdk.h
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
 //EEPROM	name		   address	size
