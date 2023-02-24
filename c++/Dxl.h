@@ -2,8 +2,7 @@
 #include <iostream>
 #include <cassert>
 
-//~~SDK/c++/include/dynamixel_sdk/dynamixel_sdk.h
-#include "dynamixel_sdk/dynamixel_sdk.h"
+#include "dynamixel_sdk.h"
 
 //EEPROM	name		   address	size
 #define Model_Number			0	//2
@@ -26,6 +25,10 @@
 #define Velocity_Limit			44	//4
 #define Max_Position_Limit		48	//4
 #define	Min_Position_Limit		52	//4
+#define External_Port_Mode_1	56	//1 xm540
+#define External_Port_Mode_2	57	//1 xm540
+#define External_Port_Mode_3	58	//1 xm540
+#define Startup_Configuration	60	//1
 #define	Shutdown				63	//1
 
 //RAM
@@ -52,7 +55,7 @@
 #define Moving					122	//1
 #define Moving_Status			123 //1
 #define Present_PWM				124	//2
-#define Present_Current			126 //2 xm430
+#define Present_Current			126 //2 xm430, xm540
 #define Present_Load			126	//2 xc430
 #define Present_Velocity		128 //4
 #define Present_Position		132	//4
@@ -60,20 +63,29 @@
 #define Position_Trajectory		140	//4
 #define Present_Input_Voltage	144 //2
 #define Present_Temperature		146	//1
+#define Backup_Ready			147	//1
+#define External_Port_Data_1	152	//2 xm540
+#define External_Port_Data_2	154	//2 xm540
+#define External_Port_Data_3	156	//2 xm540
 
-#define RESOLUTION 0.087890625
+#define RESOLUTION 0.087890625	//  360' / 4096 step
+
+struct Handler
+{
+	dynamixel::PortHandler* port;
+	dynamixel::PacketHandler* packet;
+};
 
 class Dxl
 {
 public:
 	Dxl(int id);
 	~Dxl();
-
 	static void init(int baudrate = 1000000);
 	static void close();
-	void write(int address, int data, dynamixel::PacketHandler* packet);
-	int read(int address, dynamixel::PacketHandler* packet);
-	void disable(dynamixel::PacketHandler* packet);
+	void write(int address, int data);
+	int read(int address);
+	void disable();
 	bool checkMove(int pos);
 
 	int max_pos_limit = 4095;
@@ -83,10 +95,8 @@ private:
 	int getByteSize(int address);
 
 	int _id = -1;
-	static dynamixel::PortHandler* port;
-	//static dynamixel::PacketHandler* packet;
+	static Handler handler;
 };
-
 
 // Present position 2048 = 0 degree (ccw)
 int angle2pos(double angle);
