@@ -10,21 +10,21 @@ Dxl::~Dxl()
 	
 }
 
+//static
 void Dxl::init(int baudrate)
 {
-	bool open = port->openPort();
+	bool open = handler.port->openPort();
 	if (open) {
-		std::cout << "Port name - " << port->getPortName() << "    baud rate - " << port->getBaudRate() << std::endl;
+		std::cout << "port name - " << handler.port->getPortName() << "   port baud rate - " << handler.port->getBaudRate() << std::endl;
 	}
 	else{
 		std::cout << "Failed open port. Please check the port" << std::endl;
 	}
 	assert(open != false);
 
-
-	bool change = port->setBaudRate(baudrate);
+	bool change = handler.port->setBaudRate(baudrate);
 	if (change) {
-		std::cout << "Chagned baud rate - " << port->getBaudRate() << std::endl;
+		std::cout << "Chagned port baud rate - " << handler.port->getBaudRate() << std::endl;
 	}
 	else {
 		std::cout << "Failed change baudrate. Please check the U2D2" << std::endl;
@@ -32,12 +32,13 @@ void Dxl::init(int baudrate)
 	assert(change != false);
 }
 
+//static
 void Dxl::close()
 {
-	port->closePort();
+	handler.port->closePort();
 }
 
-void Dxl::write(int address, int data, dynamixel::PacketHandler* packet)
+void Dxl::write(int address, int data)
 {
 	int size = getByteSize(address);
 	int result = -1;
@@ -46,13 +47,13 @@ void Dxl::write(int address, int data, dynamixel::PacketHandler* packet)
 	switch (size)
 	{
 	case 1:
-		result = packet->write1ByteTxRx(port, this->_id, address, data, &error);
+		result = this->handler.packet->write1ByteTxRx(this->handler.port, this->_id, address, data, &error);
 		break;
 	case 2:
-		result = packet->write2ByteTxRx(port, this->_id, address, data, &error);
+		result = this->handler.packet->write2ByteTxRx(this->handler.port, this->_id, address, data, &error);
 		break;
 	case 4:
-		result = packet->write4ByteTxRx(port, this->_id, address, data, &error);
+		result = this->handler.packet->write4ByteTxRx(this->handler.port, this->_id, address, data, &error);
 		break;
 	default:
 		std::cout << "ID - " << this->_id << " Byte size - " << size << std::endl;
@@ -60,14 +61,14 @@ void Dxl::write(int address, int data, dynamixel::PacketHandler* packet)
 	}
 
 	if (result != COMM_SUCCESS) {
-		std::cout << "ID - " << this->_id << " " << packet->getTxRxResult(result) << std::endl;
+		std::cout << "ID - " << this->_id << " " << this->handler.packet->getTxRxResult(result) << std::endl;
 	}
 	else if (error != 0) {
-		std::cout << "ID - " << this->_id << " " << packet->getRxPacketError(error) << std::endl;
+		std::cout << "ID - " << this->_id << " " << this->handler.packet->getRxPacketError(error) << std::endl;
 	}
 }
 
-int Dxl::read(int address, dynamixel::PacketHandler* packet)
+int Dxl::read(int address)
 {
 	int size = getByteSize(address);
 	int result = -1;
@@ -77,13 +78,13 @@ int Dxl::read(int address, dynamixel::PacketHandler* packet)
 	switch (size)
 	{
 	case 1:
-		result = packet->read1ByteTxRx(port, this->_id, address, (uint8_t*)&rxdata, &error);
+		result = this->handler.packet->read1ByteTxRx(this->handler.port, this->_id, address, (uint8_t*)&rxdata, &error);
 		break;
 	case 2:
-		result = packet->read2ByteTxRx(port, this->_id, address, (uint16_t*)&rxdata, &error);
+		result = this->handler.packet->read2ByteTxRx(this->handler.port, this->_id, address, (uint16_t*)&rxdata, &error);
 		break;
 	case 4:
-		result = packet->read4ByteTxRx(port, this->_id, address, (uint32_t*)&rxdata, &error);
+		result = this->handler.packet->read4ByteTxRx(this->handler.port, this->_id, address, (uint32_t*)&rxdata, &error);
 		break;
 	default:
 		std::cout << "read error ID - " << this->_id << " Byte size - " << size << std::endl;
@@ -91,18 +92,18 @@ int Dxl::read(int address, dynamixel::PacketHandler* packet)
 	}
 
 	if (result != COMM_SUCCESS) {
-		std::cout << "ID - " << this->_id << " " << packet->getTxRxResult(result) << std::endl;
+		std::cout << "ID - " << this->_id << " " << this->handler.packet->getTxRxResult(result) << std::endl;
 	}
 	else if (error != 0) {
-		std::cout << "ID - " << this->_id << " " << packet->getRxPacketError(error) << std::endl;
+		std::cout << "ID - " << this->_id << " " << this->handler.packet->getRxPacketError(error) << std::endl;
 	}
 	
 	return rxdata;
 }
 
-void Dxl::disable(dynamixel::PacketHandler* packet) {
-	Dxl::write(LED, 0, packet);
-	Dxl::write(Torque_Enable, 0, packet);
+void Dxl::disable() {
+	Dxl::write(LED, 0);
+	Dxl::write(Torque_Enable, 0);
 }
 
 bool Dxl::checkMove(int pos)
@@ -138,6 +139,11 @@ int Dxl::getByteSize(int address)
 	case Moving:
 	case Moving_Status:
 	case Present_Temperature:
+	case External_Port_Mode_1:
+	case External_Port_Mode_2:
+	case External_Port_Mode_3:
+	case Startup_Configuration:
+	case Backup_Ready:
 		size = 1;
 		break;
 
@@ -157,6 +163,9 @@ int Dxl::getByteSize(int address)
 	case Present_PWM:
 	case Present_Load:
 	case Present_Input_Voltage:
+	case External_Port_Data_1:
+	case External_Port_Data_2:
+	case External_Port_Data_3:
 		size = 2;
 		break;
 
