@@ -1,3 +1,7 @@
+# tested python 3.11.2
+# package : pyserial
+# dynamixel sdk 폴더를 python main 파일로 가져와서 사용함
+
 import Dxl
 
 dxl = Dxl.Dynamixel(1)
