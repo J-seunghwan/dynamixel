@@ -1,12 +1,12 @@
-from Dxl import *
+import Dxl
 
-dxl = Dxl(1)
+dxl = Dxl.Dynamixel(1)
 
-Dxl.init("COM6", 2.0)
+Dxl.Dynamixel.init("COM6", 2.0)
 
-dxl.write(LED, 1)
-data = dxl.read(Present_Position)
+dxl.write(Dxl.LED, 1)
+data = dxl.read(Dxl.Present_Position)
 
 dxl.disable()
 
-Dxl.close()
+Dxl.Dynamixel.close()
