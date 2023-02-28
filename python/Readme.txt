@@ -1,4 +1,5 @@
-# tested python 3.11.2
+# python 3.11.2
+# dynamixel - xc430, xm430, xm540
 # package : pyserial
 # dynamixel sdk 폴더를 python main 파일로 가져와서 사용함
 
