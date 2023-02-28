@@ -1,124 +1,138 @@
-from dynamixel_sdk import *
+import dynamixel_sdk as dynamixel
 
 #EEPROM
 #   이름                주소
 Model_Number            = 0
-Model_Information	= 2
-Firmware_Version	= 6
-ID		    	= 7
-Baud_Rate		= 8
-Return_Delay_Time	= 9
-Drive_Mode		= 10
-Operating_Mode		= 11
-Secondary_ID		= 12
-Protocol_Type		= 13
-Homing_Offset		= 20
-Moving_Threshold	= 24
-Temperature_Limit	= 31
-Max_Voltage_Limit	= 32
-Min_Voltage_Limit	= 34
-PWM_Limit		= 36
-Current_Limit		= 38#xm430
-Velocity_Limit		= 44
-Max_Position_Limit	= 48
-Min_Position_Limit	= 52
-Shutdown		= 63
+Model_Information	    = 2
+Firmware_Version	    = 6
+ID		    	        = 7
+Baud_Rate		        = 8
+Return_Delay_Time	    = 9
+Drive_Mode		        = 10
+Operating_Mode		    = 11
+Secondary_ID		    = 12
+Protocol_Type		    = 13
+Homing_Offset		    = 20
+Moving_Threshold	    = 24
+Temperature_Limit	    = 31
+Max_Voltage_Limit	    = 32
+Min_Voltage_Limit	    = 34
+PWM_Limit		        = 36
+Current_Limit		    = 38#xm430, xm540
+Velocity_Limit		    = 44
+Max_Position_Limit	    = 48
+Min_Position_Limit	    = 52
+External_Port_Mode_1    = 56#xm540
+External_Port_Mode_2    = 57#xm540
+External_Port_Mode_3    = 58#xm540
+Startup_Configuration   = 60
+Shutdown		        = 63
+
 #RAM
-Torque_Enable		= 64
-LED			= 65
-Status_Return_Level	= 68
+Torque_Enable		    = 64
+LED			            = 65
+Status_Return_Level	    = 68
 Registered_Instruction	= 69
 Hardware_Error_Status	= 70
-Velocity_I_Gain		= 76
-Velocity_P_Gain		= 78
-Position_D_Gain		= 80
-Position_I_Gain		= 82
-Position_P_Gain		= 84
+Velocity_I_Gain		    = 76
+Velocity_P_Gain		    = 78
+Position_D_Gain		    = 80
+Position_I_Gain		    = 82
+Position_P_Gain		    = 84
 Feedforward_2nd_Gain	= 88
 Feedforward_1st_Gain	= 90
-Bus_Watchdog		= 98
-Goal_PWM		= 100
-Goal_Current		= 102
-Goal_Velocity		= 104
+Bus_Watchdog		    = 98
+Goal_PWM		        = 100
+Goal_Current		    = 102
+Goal_Velocity		    = 104
 Profile_Acceleration    = 108
-Profile_Velocity	= 112
-Goal_Position		= 116
-Realtime_Tick		= 120
-Moving			= 122
-Moving_Status		= 123
-Present_PWM		= 124
-Present_Current		= 126#xm430
-Present_Load		= 126#xc430
-Present_Velocity	= 128
-Present_Position	= 132
-Velocity_Trajectory	= 136
-Position_Trajectory	= 140
+Profile_Velocity	    = 112
+Goal_Position		    = 116
+Realtime_Tick		    = 120
+Moving			        = 122
+Moving_Status		    = 123
+Present_PWM		        = 124
+Present_Current		    = 126#xm430, xm540
+Present_Load		    = 126#xc430
+Present_Velocity	    = 128
+Present_Position	    = 132
+Velocity_Trajectory	    = 136
+Position_Trajectory	    = 140
 Present_Input_Voltage   = 144
 Present_Temperature     = 146
+Backup_Ready            = 147
+External_Port_Data_1    = 152#xm540
+External_Port_Data_2    = 154#xm540
+External_Port_Data_3    = 156#xm540
 
 RESOLUTION              = 0.087890625
 
-size1Byte = (Firmware_Version, ID, Baud_Rate, Return_Delay_Time, Drive_Mode, Operating_Mode, Secondary_ID, Protocol_Type, Temperature_Limit, Shutdown, Torque_Enable, LED, Status_Return_Level, Registered_Instruction, Hardware_Error_Status, Bus_Watchdog, Moving, Moving_Status, Present_Temperature)
-size2Byte = (Model_Number, Max_Voltage_Limit, Min_Voltage_Limit, PWM_Limit, Velocity_I_Gain, Velocity_P_Gain, Position_D_Gain, Position_I_Gain, Position_P_Gain, Feedforward_2nd_Gain, Feedforward_1st_Gain, Goal_PWM, Realtime_Tick, Present_PWM, Present_Load, Present_Input_Voltage)
-size4Byte = (Model_Information, Homing_Offset, Moving_Threshold, Velocity_Limit, Max_Position_Limit, Min_Position_Limit, Goal_Velocity, Profile_Acceleration, Profile_Velocity, Goal_Position, Present_Velocity, Present_Position, Velocity_Trajectory, Position_Trajectory)
+size1Byte = (Firmware_Version, ID, Baud_Rate, Return_Delay_Time, Drive_Mode, Operating_Mode,
+            Secondary_ID, Protocol_Type, Temperature_Limit, Shutdown, External_Port_Mode_1, 
+            External_Port_Mode_2, External_Port_Mode_3, Startup_Configuration, Torque_Enable, LED, 
+            Status_Return_Level, Registered_Instruction, Hardware_Error_Status, Bus_Watchdog,
+            Moving, Moving_Status, Present_Temperature, Backup_Ready)
+size2Byte = (Model_Number, Max_Voltage_Limit, Min_Voltage_Limit, PWM_Limit, Current_Limit, Velocity_I_Gain,
+            Velocity_P_Gain, Position_D_Gain, Position_I_Gain, Position_P_Gain, 
+            Feedforward_2nd_Gain, Feedforward_1st_Gain, Goal_PWM, Realtime_Tick, Present_PWM, 
+            Present_Load, Present_Input_Voltage, External_Port_Data_1, External_Port_Data_2, External_Port_Data_3)
+size4Byte = (Model_Information, Homing_Offset, Moving_Threshold, Velocity_Limit, Max_Position_Limit, 
+            Min_Position_Limit, Goal_Velocity, Profile_Acceleration, Profile_Velocity, 
+            Goal_Position, Present_Velocity, Present_Position, Velocity_Trajectory, Position_Trajectory)
 
-class Dxl:
+class Dynamixel:
     def __init__(self, ID):
         self.__id = ID
         self.__max_pos_limit = 4095
         self.__min_pos_limit = 0
-        Dxl.__porthandler = 0
-        Dxl.__packethandler = 0
+        Dynamixel.__porthandler = None
+        Dynamixel.__packethandler = None
         
-
     @classmethod
     def init(cls, port, packet, baudrate = 1000000):
-        Dxl.__porthandler = PortHandler(port)
-        Dxl.__packethandler = PacketHandler(packet)
+        Dynamixel.__porthandler = dynamixel.PortHandler(port)
+        Dynamixel.__packethandler = dynamixel.PacketHandler(packet)
 
-        if Dxl.__porthandler.openPort():
-            name = Dxl.__porthandler.getPortName()
-            baudrate = Dxl.__porthandler.getBaudRate()
+        if Dynamixel.__porthandler.openPort():
+            name = Dynamixel.__porthandler.getPortName()
+            baudrate = Dynamixel.__porthandler.getBaudRate()
             print(f"Port name - {name} \t baudrate - {baudrate}")
         else:
             print("Failed open port. Please check the port")
             exit()
 
-        if Dxl.__porthandler.setBaudRate(baudrate):
-            baudrate = Dxl.__porthandler.getBaudRate()
+        if Dynamixel.__porthandler.setBaudRate(baudrate):
+            baudrate = Dynamixel.__porthandler.getBaudRate()
             print(f"Changed baudrate - {baudrate}")
         else:
             print("Failed change baudrate. Please check the U2D2")
             exit()
             
-
     @classmethod
     def close(cls):
-        Dxl.__porthandler.closePort()
+        Dynamixel.__porthandler.closePort()
         
-
     def write(self, address, data):
         size = self.__getByteSize(address)
         result = -1
         error = 0
 
         if size == 1:
-            result, error = Dxl.__packethandler.write1ByteTxRx(Dxl.__porthandler, self.__id, address, data)
+            result, error = Dynamixel.__packethandler.write1ByteTxRx(Dynamixel.__porthandler, self.__id, address, data)
         elif size == 2:
-            result, error = Dxl.__packethandler.write2ByteTxRx(Dxl.__porthandler, self.__id, address, data)
+            result, error = Dynamixel.__packethandler.write2ByteTxRx(Dynamixel.__porthandler, self.__id, address, data)
         elif size == 4:
-            result, error = Dxl.__packethandler.write4ByteTxRx(Dxl.__porthandler, self.__id, address, data)
+            result, error = Dynamixel.__packethandler.write4ByteTxRx(Dynamixel.__porthandler, self.__id, address, data)
         else:
-            print(f"ID - {self.id} Byte size - {size}")
+            print(f"Warning(address) : ID - {self.__id} Byte size - {size}")
 
-        if result != COMM_SUCCESS:
-            res = Dxl.__packethandler.getTxRxResult(result)
-            print(f"ID - {self.id} {res}")
+        if result != dynamixel.COMM_SUCCESS:
+            res = Dynamixel.__packethandler.getTxRxResult(result)
+            print(f"Warning(result) : ID - {self.__id} {res}")
         elif error != 0:
-            res = Dxl.__packethandler.getRxPacketError(error)
-            print(f"ID - {self.id} {res}")
+            res = Dynamixel.__packethandler.getRxPacketError(error)
+            print(f"Warning(error) : ID - {self.__id} {res}")
             
-
     def read(self, address):
         size = self.__getByteSize(address)
         result = -1
@@ -126,35 +140,32 @@ class Dxl:
         rxdata = 0
 
         if size == 1:
-            rxdata, result, error = Dxl.__packethandler.read1ByteTxRx(Dxl.__porthandler, self.__id, address)
+            rxdata, result, error = Dynamixel.__packethandler.read1ByteTxRx(Dynamixel.__porthandler, self.__id, address)
         elif size == 2:
-            rxdata, result, error = Dxl.__packethandler.read2ByteTxRx(Dxl.__porthandler, self.__id, address)
+            rxdata, result, error = Dynamixel.__packethandler.read2ByteTxRx(Dynamixel.__porthandler, self.__id, address)
         elif size == 4:
-            rxdata, result, error = Dxl.__packethandler.read4ByteTxRx(Dxl.__porthandler, self.__id, address)
+            rxdata, result, error = Dynamixel.__packethandler.read4ByteTxRx(Dynamixel.__porthandler, self.__id, address)
         else:
-            print(f"ID - {self.id} Byte size - {size}")
+            print(f"Warning(address) : ID - {self.__id} Byte size - {size}")
 
-        if result != COMM_SUCCESS:
-            res = Dxl.__packethandler.getTxRxResult(result)
-            print(f"ID - {self.id} {res}")
+        if result != dynamixel.COMM_SUCCESS:
+            res = Dynamixel.__packethandler.getTxRxResult(result)
+            print(f"Warning(result) : ID - {self.__id} {res}")
         elif error != 0:
-            res = Dxl.__packethandler.getRxPacketError(error)
-            print(f"ID - {self.id} {res}")
+            res = Dynamixel.__packethandler.getRxPacketError(error)
+            print(f"Warning(error) : ID - {self.__id} {res}")
 
         return rxdata
     
-
     def disable(self):
         self.write(LED, 0)
         self.write(Torque_Enable, 0)
         
-    
     def checkMove(self, pos):
         if pos > self.__max_pos_limit or pos < self.__min_pos_limit:
             return False
         return True
     
-
     def __getByteSize(self, address):
         size = 0
         if address in size1Byte:
@@ -164,14 +175,11 @@ class Dxl:
         elif address in size4Byte:
             size = 4
         else:
-            print(f"Exception : address size - {address}")
+            print(f"Exception : address - {address}")
         return size
     
-
 # 2048(position) == 0(degree)
-
 def angle2pos(angle):
     return int(round((angle+180)/RESOLUTION))
-
 def pos2angle(pos):
     return pos * RESOLUTION - 180
