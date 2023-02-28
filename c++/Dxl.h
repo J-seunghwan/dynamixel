@@ -21,7 +21,7 @@
 #define	Max_Voltage_Limit		32	//2
 #define Min_Voltage_Limit		34	//2
 #define PWM_Limit				36	//2
-#define Current_Limit			38	//2 xm430
+#define Current_Limit			38	//2 xm430,
 #define Velocity_Limit			44	//4
 #define Max_Position_Limit		48	//4
 #define	Min_Position_Limit		52	//4
