@@ -1,3 +1,5 @@
+import warnings
+
 import dynamixel_sdk as dynamixel
 
 #EEPROM
@@ -89,7 +91,7 @@ class Dynamixel:
         Dynamixel.__packethandler = None
         
     @classmethod
-    def init(cls, port, packet, baudrate = 1000000):
+    def initPort(cls, port, packet, baudrate = 1000000):
         Dynamixel.__porthandler = dynamixel.PortHandler(port)
         Dynamixel.__packethandler = dynamixel.PacketHandler(packet)
 
@@ -99,17 +101,15 @@ class Dynamixel:
             print(f"Port name - {name} \t baudrate - {baudrate}")
         else:
             print("Failed open port. Please check the port")
-            exit()
 
         if Dynamixel.__porthandler.setBaudRate(baudrate):
             baudrate = Dynamixel.__porthandler.getBaudRate()
             print(f"Changed baudrate - {baudrate}")
         else:
             print("Failed change baudrate. Please check the U2D2")
-            exit()
             
     @classmethod
-    def close(cls):
+    def closePort(cls):
         Dynamixel.__porthandler.closePort()
         
     def write(self, address, data):
@@ -124,14 +124,17 @@ class Dynamixel:
         elif size == 4:
             result, error = Dynamixel.__packethandler.write4ByteTxRx(Dynamixel.__porthandler, self.__id, address, data)
         else:
-            print(f"Warning(address) : ID - {self.__id} Byte size - {size}")
+            warntxt = f"ID: {self.__id}   address Byte size: {size}"
+            warnings.warn(warntxt)
 
         if result != dynamixel.COMM_SUCCESS:
             res = Dynamixel.__packethandler.getTxRxResult(result)
-            print(f"Warning(result) : ID - {self.__id} {res}")
+            warntxt = f"ID: {self.__id}    result: {res}"
+            warnings.warn(warntxt)
         elif error != 0:
             res = Dynamixel.__packethandler.getRxPacketError(error)
-            print(f"Warning(error) : ID - {self.__id} {res}")
+            warntxt = f"ID: {self.__id}    error: {res}"
+            warnings.warn(warntxt)
             
     def read(self, address):
         size = self.__getByteSize(address)
@@ -146,15 +149,18 @@ class Dynamixel:
         elif size == 4:
             rxdata, result, error = Dynamixel.__packethandler.read4ByteTxRx(Dynamixel.__porthandler, self.__id, address)
         else:
-            print(f"Warning(address) : ID - {self.__id} Byte size - {size}")
+            warntxt = f"ID: {self.__id}   address Byte size: {size}"
+            warnings.warn(warntxt)
 
         if result != dynamixel.COMM_SUCCESS:
             res = Dynamixel.__packethandler.getTxRxResult(result)
-            print(f"Warning(result) : ID - {self.__id} {res}")
+            warntxt = f"ID: {self.__id}    result: {res}"
+            warnings.warn(warntxt)
         elif error != 0:
             res = Dynamixel.__packethandler.getRxPacketError(error)
-            print(f"Warning(error) : ID - {self.__id} {res}")
-
+            warntxt = f"ID: {self.__id}    error: {res}"
+            warnings.warn(warntxt)
+            
         return rxdata
     
     def disable(self):
@@ -165,6 +171,10 @@ class Dynamixel:
         if pos > self.__max_pos_limit or pos < self.__min_pos_limit:
             return False
         return True
+    
+    def loadData(self):
+        self.__max_pos_limit = self.read(Max_Position_Limit)
+        self.__min_pos_limit = self.read(Min_Position_Limit)
     
     def __getByteSize(self, address):
         size = 0
@@ -178,6 +188,7 @@ class Dynamixel:
             print(f"Exception : address - {address}")
         return size
     
+
 # 2048(position) == 0(degree)
 def angle2pos(angle):
     return int(round((angle+180)/RESOLUTION))
