@@ -11,7 +11,7 @@ Dxl::~Dxl()
 }
 
 //static
-void Dxl::init(int baudrate)
+void Dxl::initPort(int baudrate)
 {
 	bool open = handler.port->openPort();
 	if (open) {
@@ -20,8 +20,7 @@ void Dxl::init(int baudrate)
 	else{
 		std::cout << "Failed open port. Please check the port" << std::endl;
 	}
-	assert(open != false);
-
+	
 	bool change = handler.port->setBaudRate(baudrate);
 	if (change) {
 		std::cout << "Chagned port baud rate - " << handler.port->getBaudRate() << std::endl;
@@ -29,11 +28,10 @@ void Dxl::init(int baudrate)
 	else {
 		std::cout << "Failed change baudrate. Please check the U2D2" << std::endl;
 	}
-	assert(change != false);
 }
 
 //static
-void Dxl::close()
+void Dxl::closePort()
 {
 	handler.port->closePort();
 }
@@ -112,6 +110,12 @@ bool Dxl::checkMove(int pos)
 		return false;
 	}
 	return true;
+}
+
+void Dxl::loadData()
+{
+	this->max_pos_limit = this->read(Max_Position_Limit);
+	this->min_pos_limit = this->read(Min_Position_Limit);
 }
 
 int Dxl::getByteSize(int address)
