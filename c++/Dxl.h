@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <cassert>
 
 #include "dynamixel_sdk.h"
 
