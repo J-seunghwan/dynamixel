@@ -81,12 +81,13 @@ class Dxl
 public:
 	Dxl(int id);
 	~Dxl();
-	static void init(int baudrate = 1000000);
-	static void close();
+	static void initPort(int baudrate = 1000000);
+	static void closePort();
 	void write(int address, int data);
 	int read(int address);
 	void disable();
 	bool checkMove(int pos);
+	void loadData();
 
 	int max_pos_limit = 4095;
 	int min_pos_limit = 0;
