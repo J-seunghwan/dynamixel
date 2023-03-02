@@ -3,15 +3,23 @@
 # package : pyserial
 # dynamixel sdk 폴더를 python main 파일로 가져와서 사용함
 
+import warnings # Dxl에 포함돼있으니까 import 안하고 Dxl.warnings.~~~로 해도됨
 import Dxl
+
+warnings.filterwarnings("error")
+
+Dxl.Dynamixel.initPort("COM6", 2.0)
 
 dxl = Dxl.Dynamixel(1)
 
-Dxl.Dynamixel.init("COM6", 2.0)
+# check ready
+dxl.read(Dxl.ID)
+dxl.loadData()
 
+# use
 dxl.write(Dxl.LED, 1)
 data = dxl.read(Dxl.Present_Position)
 
 dxl.disable()
 
-Dxl.Dynamixel.close()
+Dxl.Dynamixel.closePort()
