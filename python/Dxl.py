@@ -98,13 +98,13 @@ class Dynamixel:
         if Dynamixel.__porthandler.openPort():
             name = Dynamixel.__porthandler.getPortName()
             baudrate = Dynamixel.__porthandler.getBaudRate()
-            print(f"Port name - {name} \t baudrate - {baudrate}")
+            print(f"Port name - {name}\tbaudrate - {baudrate}")
         else:
-            print("Failed open port. Please check the port")
+            print("Failed open port. Please check the U2D2")
 
         if Dynamixel.__porthandler.setBaudRate(baudrate):
             baudrate = Dynamixel.__porthandler.getBaudRate()
-            print(f"Changed baudrate - {baudrate}")
+            print(f"Changed port baudrate - {baudrate}")
         else:
             print("Failed change baudrate. Please check the U2D2")
             
