@@ -83,12 +83,13 @@ size4Byte = (Model_Information, Homing_Offset, Moving_Threshold, Velocity_Limit,
             Goal_Position, Present_Velocity, Present_Position, Velocity_Trajectory, Position_Trajectory)
 
 class Dynamixel:
+    __porthandler = None
+    __packethandler = None
+    
     def __init__(self, ID):
         self.__id = ID
         self.__max_pos_limit = 4095
         self.__min_pos_limit = 0
-        Dynamixel.__porthandler = None
-        Dynamixel.__packethandler = None
         
     @classmethod
     def initPort(cls, port, packet, baudrate = 1000000):
