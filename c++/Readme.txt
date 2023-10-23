@@ -19,18 +19,18 @@ int main(){
 	// U2D2 초기화
 	Dxl::initPort();
 	
-	// check ready
-	dxl.loadData()
+	// 다이나믹셀에 저장된 값 불러오기
+	dxl.loadData();
 
 	// 사용 예시
 	dxl.write(Torque_Enable, 1);
 	dxl.read(Present_Position);
 	
-	// 연결 끊기 전 사용(다이나믹셀 비활성화) - led, torque 비활성
+	// 연결 끊기 전 led, torque 비활성
 	dxl.disable();
 	
 	// U2D2 연결 끊기
-	Dxl::close();
+	Dxl::closePort();
 
 	return 0;
 }
