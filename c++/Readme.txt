@@ -17,7 +17,7 @@ int main(){
 	Dxl dxl = Dxl(1); // 1번 id 다이나믹셀
 
 	// U2D2 초기화
-	Dxl::initPort();
+	Dxl::initPort(115200);
 	
 	// 다이나믹셀에 저장된 값 불러오기
 	dxl.loadData();
