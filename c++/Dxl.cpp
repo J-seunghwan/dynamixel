@@ -59,10 +59,10 @@ void Dxl::write(int address, int data)
 	}
 
 	if (result != COMM_SUCCESS) {
-		std::cout << "ID - " << this->_id << " " << this->handler.packet->getTxRxResult(result) << std::endl;
+		std::cout << "ID - " << this->_id << " address " << address << " " << this->handler.packet->getTxRxResult(result) << std::endl;
 	}
 	else if (error != 0) {
-		std::cout << "ID - " << this->_id << " " << this->handler.packet->getRxPacketError(error) << std::endl;
+		std::cout << "ID - " << this->_id << " address " << address << " " << this->handler.packet->getRxPacketError(error) << std::endl;
 	}
 }
 
@@ -90,10 +90,10 @@ int Dxl::read(int address)
 	}
 
 	if (result != COMM_SUCCESS) {
-		std::cout << "ID - " << this->_id << " " << this->handler.packet->getTxRxResult(result) << std::endl;
+		std::cout << "ID - " << this->_id << " address " << address << " " << this->handler.packet->getTxRxResult(result) << std::endl;
 	}
 	else if (error != 0) {
-		std::cout << "ID - " << this->_id << " " << this->handler.packet->getRxPacketError(error) << std::endl;
+		std::cout << "ID - " << this->_id << " address " << address << " " << this->handler.packet->getRxPacketError(error) << std::endl;
 	}
 	
 	return rxdata;
@@ -163,6 +163,7 @@ int Dxl::getByteSize(int address)
 	case Feedforward_2nd_Gain:
 	case Feedforward_1st_Gain:
 	case Goal_PWM:
+	case Goal_Current:
 	case Realtime_Tick:
 	case Present_PWM:
 	case Present_Load:
