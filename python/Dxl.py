@@ -92,7 +92,7 @@ class Dynamixel:
         self.__min_pos_limit = 0
         
     @classmethod
-    def initPort(cls, port, packet, baudrate = 1000000):
+    def initPort(cls, port, packet, baudrate):
         Dynamixel.__porthandler = dynamixel.PortHandler(port)
         Dynamixel.__packethandler = dynamixel.PacketHandler(packet)
 
