@@ -8,12 +8,11 @@ import Dxl
 
 warnings.filterwarnings("error")
 
-Dxl.Dynamixel.initPort("COM6", 2.0)
+Dxl.Dynamixel.initPort("COM6", 2.0, 115200)
 
+# id 1번 다이나믹셀 선언
 dxl = Dxl.Dynamixel(1)
 
-# check ready
-dxl.read(Dxl.ID)
 dxl.loadData()
 
 # use
