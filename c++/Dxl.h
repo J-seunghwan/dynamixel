@@ -80,7 +80,7 @@ class Dxl
 public:
 	Dxl(int id);
 	~Dxl();
-	static void initPort(int baudrate = 1000000);
+	static void initPort(int baudrate);
 	static void closePort();
 	void write(int address, int data);
 	int read(int address);
