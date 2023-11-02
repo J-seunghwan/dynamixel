@@ -76,7 +76,7 @@ size1Byte = (Firmware_Version, ID, Baud_Rate, Return_Delay_Time, Drive_Mode, Ope
             Moving, Moving_Status, Present_Temperature, Backup_Ready)
 size2Byte = (Model_Number, Max_Voltage_Limit, Min_Voltage_Limit, PWM_Limit, Current_Limit, Velocity_I_Gain,
             Velocity_P_Gain, Position_D_Gain, Position_I_Gain, Position_P_Gain, 
-            Feedforward_2nd_Gain, Feedforward_1st_Gain, Goal_PWM, Realtime_Tick, Present_PWM, 
+            Feedforward_2nd_Gain, Feedforward_1st_Gain, Goal_PWM, Goal_Current, Realtime_Tick, Present_PWM, 
             Present_Load, Present_Input_Voltage, External_Port_Data_1, External_Port_Data_2, External_Port_Data_3)
 size4Byte = (Model_Information, Homing_Offset, Moving_Threshold, Velocity_Limit, Max_Position_Limit, 
             Min_Position_Limit, Goal_Velocity, Profile_Acceleration, Profile_Velocity, 
@@ -130,11 +130,11 @@ class Dynamixel:
 
         if result != dynamixel.COMM_SUCCESS:
             res = Dynamixel.__packethandler.getTxRxResult(result)
-            warntxt = f"ID: {self.__id}    result: {res}"
+            warntxt = f"ID: {self.__id}    result: {res}    address: {address}"
             warnings.warn(warntxt)
         elif error != 0:
             res = Dynamixel.__packethandler.getRxPacketError(error)
-            warntxt = f"ID: {self.__id}    error: {res}"
+            warntxt = f"ID: {self.__id}    error: {res}    address: {address}"
             warnings.warn(warntxt)
             
     def read(self, address):
@@ -155,11 +155,11 @@ class Dynamixel:
 
         if result != dynamixel.COMM_SUCCESS:
             res = Dynamixel.__packethandler.getTxRxResult(result)
-            warntxt = f"ID: {self.__id}    result: {res}"
+            warntxt = f"ID: {self.__id}    result: {res}    address: {address}"
             warnings.warn(warntxt)
         elif error != 0:
             res = Dynamixel.__packethandler.getRxPacketError(error)
-            warntxt = f"ID: {self.__id}    error: {res}"
+            warntxt = f"ID: {self.__id}    error: {res}    address: {address}"
             warnings.warn(warntxt)
             
         return rxdata
